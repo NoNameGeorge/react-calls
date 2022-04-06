@@ -2,45 +2,35 @@ import React from 'react';
 
 const Pagination = ({ className, currentPage, maxPage, pageHandler }) => {
     return (
-        <div className={`${className} pagination`}>
-            {
-                currentPage !== 1 &&
+        <>
+            <div className={`${className} pagination`}>
                 <span
-                    className="pagination__first"
+                    className={`pagination__first ${currentPage <= 1 && 'disabled'}`}
                     onClick={() => pageHandler(1)}
                 >
                     Первая страница
                 </span>
-            }
-            {
-                currentPage > 1 &&
                 <span
-                    className="pagination__prev"
+                    className={`pagination__prev ${currentPage <= 1 && 'disabled'}`}
                     onClick={() => pageHandler(currentPage - 1)}
                 >
                     Назад
                 </span>
-            }
-
-            {
-                currentPage < maxPage &&
                 <span
-                    className="pagination__next"
+                    className={`pagination__next ${currentPage >= maxPage && 'disabled'}`}
                     onClick={() => pageHandler(currentPage + 1)}
                 >
                     Вперед
                 </span>
-            }
-            {
-                currentPage !== maxPage &&
                 <span
-                    className="pagination__first"
+                    className={`pagination__first ${currentPage === maxPage && 'disabled'}`}
                     onClick={() => pageHandler(maxPage)}
                 >
                     Последняя страница
                 </span>
-            }
-        </div>
+            </div>
+            <div className="current-page">Текущая страница: <span>{currentPage}</span></div>
+        </>
     );
 };
 

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React from "react";
+import Company from "./components/Company";
 import Pagination from "./components/Pagination";
 
 function App() {
@@ -30,24 +31,23 @@ function App() {
 
   return (
     <div className="main-wrapper">
-      <div className="container">
+      <div className="container main">
+        <div className="company-title">Компании</div>
         {
           companies.length
             ? <div className="company">
               {
                 companies.map(company => {
-                  return <div
+                  return <Company 
                     key={company.id}
-                    className="company__item"
-                  >
-                    <span>{company.name}</span>
-                  </div>
+                    {...company}
+                  />
                 })
               }
             </div>
             : 'Загрузка'
         }
-        
+
         <Pagination
           className='company__pagination'
           currentPage={companiesPage}
