@@ -22,7 +22,7 @@ const Company = ({ id, name }) => {
     const pageHandler = (newPage = 1) => {
         setCallsPage(newPage)
     }
-
+   
     return (
         <div
             className={`company__item ${active ? 'active' : ''}`}
