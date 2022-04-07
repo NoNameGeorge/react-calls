@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 
 import Company from "./components/Company";
+import Filters from "./components/Filters";
 import Pagination from "./components/Pagination";
 
 function App() {
@@ -14,14 +15,38 @@ function App() {
   const [companies, setCompanies] = React.useState([])
   const [companiesPage, setCompaniesPage] = React.useState(1)
 
+  const [searchValue, setSearchValue] = React.useState('')
+  const [sortType, setSortType] = React.useState(null)
+
   React.useEffect(() => {
+    let params = `?_page=${companiesPage}&_limit=${pageSize}`
+
+    if (searchValue) {
+      params += '&name_like=^' + searchValue
+    }
+    if (sortType) {
+      params += '&' + sortType
+    }
+
+    console.log(params)
+
     axios
-      .get(`http://test.runcall.ru/Api/GetCallCampaigns?Page=${companiesPage}&pageSize=${pageSize}`)
+      .get(`http://localhost:3001/companies${params}`)
       .then(({ data }) => {
+        console.log(data)
         setCompanies(data)
       })
       .catch(error => console.log(error))
-  }, [companiesPage])
+  }, [companiesPage, searchValue, sortType])
+
+  // React.useEffect(() => {
+  //   axios
+  //     .get(`http://test.runcall.ru/Api/GetCallCampaigns?Page=${companiesPage}&pageSize=${pageSize}`)
+  //     .then(({ data }) => {
+  //       setCompanies(data)
+  //     })
+  //     .catch(error => console.log(error))
+  // }, [companiesPage])
 
 
   console.log(maxCompaniesPage, companiesPage)
@@ -34,6 +59,12 @@ function App() {
     <div className="main-wrapper">
       <div className="container main">
         <div className="company-title">Компании</div>
+        <Filters 
+          value={searchValue}
+          onChange={setSearchValue}
+          sortHandler={setSortType}
+          sortType={sortType}
+        />
         {
           companies.length
             ? <div className="company">
