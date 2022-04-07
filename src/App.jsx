@@ -14,11 +14,13 @@ function App() {
 
   const [companies, setCompanies] = React.useState([])
   const [companiesPage, setCompaniesPage] = React.useState(1)
+  const [isSearching, setIsSearching] = React.useState(false)
 
   const [searchValue, setSearchValue] = React.useState('')
   const [sortType, setSortType] = React.useState(null)
 
   React.useEffect(() => {
+    setIsSearching(prev => !prev)
     let params = `?_page=${companiesPage}&_limit=${pageSize}`
 
     if (searchValue) {
@@ -28,17 +30,20 @@ function App() {
       params += '&' + sortType
     }
 
-    console.log(params)
-
     axios
       .get(`http://localhost:3001/companies${params}`)
       .then(({ data }) => {
-        console.log(data)
         setCompanies(data)
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        console.log(error)
+      })
+      .finally(() => {
+        setIsSearching(prev => !prev)
+      })
   }, [companiesPage, searchValue, sortType])
 
+  // Old request
   // React.useEffect(() => {
   //   axios
   //     .get(`http://test.runcall.ru/Api/GetCallCampaigns?Page=${companiesPage}&pageSize=${pageSize}`)
@@ -48,10 +53,7 @@ function App() {
   //     .catch(error => console.log(error))
   // }, [companiesPage])
 
-
-  console.log(maxCompaniesPage, companiesPage)
-
-  const pageHandler = (newPage = 1) => { 
+  const pageHandler = (newPage = 1) => {
     setCompaniesPage(newPage)
   }
 
@@ -59,7 +61,7 @@ function App() {
     <div className="main-wrapper">
       <div className="container main">
         <div className="company-title">Компании</div>
-        <Filters 
+        <Filters
           value={searchValue}
           onChange={setSearchValue}
           sortHandler={setSortType}
@@ -70,7 +72,7 @@ function App() {
             ? <div className="company">
               {
                 companies.map(company => {
-                  return <Company 
+                  return <Company
                     key={company.id}
                     {...company}
                   />
