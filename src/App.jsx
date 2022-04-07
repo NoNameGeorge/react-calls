@@ -1,5 +1,6 @@
 import axios from "axios";
 import React from "react";
+
 import Company from "./components/Company";
 import Pagination from "./components/Pagination";
 
@@ -25,7 +26,7 @@ function App() {
 
   console.log(maxCompaniesPage, companiesPage)
 
-  const pageHandler = (newPage = 1) => {
+  const pageHandler = (newPage = 1) => { 
     setCompaniesPage(newPage)
   }
 

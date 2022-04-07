@@ -2,6 +2,10 @@ import axios from 'axios';
 import React from 'react';
 
 const Company = ({ id, name }) => {
+    // Я либо не до конца разобрался с API
+    // Либо у меня не получается :)
+    // При запросах ?filters=name@="a" или ?filters=name@=a, или ?sorts=name
+    // У меня выходит ошибка, поэтому я скопировал "БД" на json-server, чтобы подгружать данные с него
     const pageSize = 10
 
     const [active, setActive] = React.useState(true)
@@ -10,12 +14,12 @@ const Company = ({ id, name }) => {
 
     React.useEffect(() => {
         if (active) {
-            axios
-              .get(`http://test.runcall.ru/Api/GetCallResults?Page=${callsPage}&pageSize=${pageSize}`)
-              .then(({ data }) => {
-                setCalls(data)
-              })
-              .catch(error => console.log(error))
+            // axios
+            //   .get(`http://test.runcall.ru/Api/GetCallResults?Page=${callsPage}&pageSize=${pageSize}`)
+            //   .then(({ data }) => {
+            //     setCalls(data)
+            //   })
+            //   .catch(error => console.log(error))
         }
     }, [])
 
