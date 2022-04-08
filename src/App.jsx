@@ -8,32 +8,36 @@ import Pagination from "./components/Pagination";
 function App() {
   // Если не задавать статически это значение - 
   // То я знаю, что с бэка можно передавать общее значение в header
-  const companiesSize = 50
   const pageSize = 10
-  const maxCompaniesPage = Math.ceil(companiesSize / pageSize)
 
   const [companies, setCompanies] = React.useState([])
   const [companiesPage, setCompaniesPage] = React.useState(1)
   const [isSearching, setIsSearching] = React.useState(false)
 
+  // Для поиска можно было бы еще реализовать debounce
   const [searchValue, setSearchValue] = React.useState('')
   const [sortType, setSortType] = React.useState(null)
 
+  const [hasNextPage, setHasNextPage] = React.useState(false)
+
+
   React.useEffect(() => {
     setIsSearching(prev => !prev)
-    let params = `?_page=${companiesPage}&_limit=${pageSize}`
-
-    if (searchValue) {
-      params += '&name_like=^' + searchValue
-    }
-    if (sortType) {
-      params += '&' + sortType
-    }
+    let params = ``
+    
+    params += searchValue ? `filters=${searchValue}` : ''
+    params += sortType ? sortType : ''
 
     axios
-      .get(`http://localhost:3001/companies${params}`)
+      .get(`http://test.runcall.ru/Api/GetCallCampaigns?Page=${companiesPage}&PageSize=${pageSize}${params}`)
       .then(({ data }) => {
         setCompanies(data)
+        // Проверка на наличие следующей страницы
+        axios
+          .get(`http://test.runcall.ru/Api/GetCallCampaigns?Page=${companiesPage + 1}&PageSize=${pageSize}${params}`)
+          .then(({ data }) => {
+            setHasNextPage(data.length !== 0)
+          })
       })
       .catch(error => {
         console.log(error)
@@ -42,16 +46,6 @@ function App() {
         setIsSearching(prev => !prev)
       })
   }, [companiesPage, searchValue, sortType])
-
-  // Old request
-  // React.useEffect(() => {
-  //   axios
-  //     .get(`http://test.runcall.ru/Api/GetCallCampaigns?Page=${companiesPage}&pageSize=${pageSize}`)
-  //     .then(({ data }) => {
-  //       setCompanies(data)
-  //     })
-  //     .catch(error => console.log(error))
-  // }, [companiesPage])
 
   const pageHandler = (newPage = 1) => {
     setCompaniesPage(newPage)
@@ -85,7 +79,7 @@ function App() {
         <Pagination
           className='company__pagination'
           currentPage={companiesPage}
-          maxPage={maxCompaniesPage}
+          hasNextPage={hasNextPage}
           pageHandler={(newPage) => pageHandler(newPage)}
         />
       </div>

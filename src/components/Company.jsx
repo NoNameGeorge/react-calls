@@ -13,20 +13,25 @@ const Company = ({ id, name }) => {
     const [calls, setCalls] = React.useState([])
     const [callsPage, setCallsPage] = React.useState(1)
     const [isSearching, setIsSearching] = React.useState(false)
-    const [totalCount, setTotalCount] = React.useState(0)
 
+    const [hasNextPage, setHasNextPage] = React.useState(false)
 
     React.useEffect(() => {
         if (active) {
             setIsSearching(prev => !prev)
 
-            let params = `?_page=${callsPage}&_limit=${pageSize}&callCampaign.id=${id}`
+            let params = ``
 
             axios
-                .get(`http://localhost:3001/calls${params}`)
+                .get(`http://test.runcall.ru/Api/GetCallResults?Page=${callsPage}&PageSize=${pageSize}${params}`)
                 .then(response => {
-                    setTotalCount(response.headers['x-total-count'])
                     setCalls(response.data)
+                    // Проверка на наличие следующей страницы
+                    axios
+                        .get(`http://test.runcall.ru/Api/GetCallResults?Page=${callsPage + 1}&PageSize=${pageSize}${params}`)
+                        .then(({ data }) => {
+                            setHasNextPage(data.length !== 0)
+                        })
                 })
                 .catch(error => {
                     console.log(error)
@@ -45,41 +50,34 @@ const Company = ({ id, name }) => {
         <div
             className={`company__item ${active ? 'active' : ''}`}
         >
-            <span
-                onClick={() => setActive(!active)}
-            >
+            <span onClick={() => setActive(!active)}>
                 {name}
             </span>
-            {
-                active ?
-                    (isSearching)
-                        ? <div className='download'>Загрузка...</div>
-                        : calls.length
-                            ? <>
-                                <div className="company__calls">
-                                    {calls.map(call => {
-                                        return <div
-                                            key={call.id}
-                                            className='company__call'
-                                        >
-                                            <div className="call-number">{call.phone}</div>
-                                            <div className="call-comment">{call.comment ? call.comment : '- Нет комментариев'}</div>
-                                        </div>
-                                    })}
-                                </div>
-                                {
-                                    totalCount > 10 &&
-                                    <Pagination
-                                        className='calls__pagination'
-                                        currentPage={callsPage}
-                                        maxPage={Math.ceil(totalCount / pageSize)}
-                                        pageHandler={(newPage) => pageHandler(newPage)}
-                                    />
-                                }
-                            </>
-                            : <div className='not-found'>Нет звонков</div>
-                    : ''
-            }
+            {active ?
+                (isSearching)
+                    ? <div className='download'>Загрузка...</div>
+                    : calls.length
+                        ? <>
+                            <div className="company__calls">
+                                {calls.map(call => {
+                                    return <div
+                                        key={call.id}
+                                        className='company__call'
+                                    >
+                                        <div className="call-number">{call.phone}</div>
+                                        <div className="call-comment">{call.comment ? call.comment : '- Нет комментариев'}</div>
+                                    </div>
+                                })}
+                            </div>
+                            {hasNextPage && <Pagination
+                                className='calls__pagination'
+                                currentPage={callsPage}
+                                hasNextPage={hasNextPage}
+                                pageHandler={(newPage) => pageHandler(newPage)}
+                            />}
+                        </>
+                        : <div className='not-found'>Нет звонков</div>
+                : ''}
         </div>
     );
 };

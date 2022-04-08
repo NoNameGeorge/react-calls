@@ -6,10 +6,10 @@ const Filters = ({ value, onChange, sortHandler, sortType }) => {
         type: null
     }, {
         name: 'По алфавиту (с начала)',
-        type: '_sort=name&_order=ABC'
+        type: '&sorts=name'
     }, {
         name: 'По алфавиту (с конца)',
-        type: '_sort=name&_order=DESC'
+        type: '&sorts=-name'
     }]
 
     return (
@@ -21,17 +21,15 @@ const Filters = ({ value, onChange, sortHandler, sortType }) => {
                 onChange={(e) => onChange(e.target.value)}
             />
             <div className="filters__items">
-                {
-                    sortTpes.map((sortItem, index) => {
-                        return <div
-                            key={`filter-item__${index}`}
-                            className={`filters__item ${sortType === sortItem.type ? 'disabled' : ''}`}
-                            onClick={() => sortHandler(sortItem.type)}
-                        >
-                            {sortItem.name}
-                        </div>
-                    })
-                }
+                {sortTpes.map((sortItem, index) => {
+                    return <div
+                        key={`filter-item__${index}`}
+                        className={`filters__item ${sortType === sortItem.type ? 'disabled' : ''}`}
+                        onClick={() => sortHandler(sortItem.type)}
+                    >
+                        {sortItem.name}
+                    </div>
+                })}
             </div>
         </div>
     );
