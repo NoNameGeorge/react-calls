@@ -6,7 +6,6 @@
 **Stack:**
 - ReactJS (Hooks)
 - axios
-- React Router
 - SASS (SCSS)
 
 
