@@ -24,8 +24,8 @@ function App() {
   React.useEffect(() => {
     setIsSearching(prev => !prev)
     let params = ``
-    
-    params += searchValue ? `filters=${searchValue}` : ''
+
+    params += searchValue ? `&filters=name@=${searchValue}` : ''
     params += sortType ? sortType : ''
 
     axios
@@ -61,8 +61,9 @@ function App() {
           sortHandler={setSortType}
           sortType={sortType}
         />
-        {
-          companies.length
+        {isSearching
+          ? <div className='download'>Загрузка...</div>
+          : companies.length
             ? <div className="company">
               {
                 companies.map(company => {
@@ -73,9 +74,8 @@ function App() {
                 })
               }
             </div>
-            : 'Загрузка'
+            : <div className='not-found'>Нет результатов</div>
         }
-
         <Pagination
           className='company__pagination'
           currentPage={companiesPage}
