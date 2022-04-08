@@ -10,4 +10,4 @@
 - SASS (SCSS)
 
 
-# npm i -> npm run start -> npm run json-server -> successful launch
+# npm i -> npm run start -> successful launch
